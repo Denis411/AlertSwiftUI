@@ -18,16 +18,29 @@ struct ContentView: View {
                 Text("Stow alert")
             }
         }
-        .modifier(AlertViewModifier(isAlertPresenter: $isAlertShown))
+        .modifier(AlertViewModifier(
+            isAlertPresenter: $isAlertShown,
+            confirmAction: print("Confirmed"),
+            dismissAction: isAlertShown.toggle())
+        )
     }
 }
 
 
 struct AlertViewModifier: ViewModifier {
-    @Binding var isAlertPresenter: Bool
-//    @Binding var confirmAction: () -> Void
-//    @Binding var dismissAction: () -> Void
+    @Binding private var isAlertPresenter: Bool
+    private var confirmAction: () -> Void
+    private var dismissAction: () -> Void
 
+    init(
+        isAlertPresenter: Binding<Bool>,
+        confirmAction: @escaping @autoclosure () -> Void,
+        dismissAction: @escaping @autoclosure () -> Void
+    ) {
+        self._isAlertPresenter = isAlertPresenter
+        self.confirmAction = confirmAction
+        self.dismissAction = dismissAction
+    }
 
     func body(content: Content) -> some View {
         if isAlertPresenter {
@@ -36,8 +49,8 @@ struct AlertViewModifier: ViewModifier {
             return AnyView(
             ZStack(alignment: .center) {
                 AlertView(
-                    confirmAction: .constant({}),
-                    dismissAction: .constant({})
+                    confirmAction: confirmAction(),
+                    dismissAction: dismissAction()
                 )
             }
             )
@@ -46,8 +59,16 @@ struct AlertViewModifier: ViewModifier {
 }
 
 struct AlertView: View {
-    @Binding var confirmAction: () -> Void
-    @Binding var dismissAction: () -> Void
+    private var confirmAction: () -> Void
+    private var dismissAction: () -> Void
+
+    init(
+        confirmAction: @escaping @autoclosure() -> Void,
+        dismissAction: @escaping @autoclosure() -> Void
+    ) {
+        self.confirmAction = confirmAction
+        self.dismissAction = dismissAction
+    }
 
     var body: some View {
         createStackOfButtons()
