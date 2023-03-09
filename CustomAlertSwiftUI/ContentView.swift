@@ -23,6 +23,7 @@ struct ContentView: View {
             confirmAction: print("Confirmed"),
             dismissAction: isAlertShown.toggle())
         )
+
     }
 }
 
@@ -75,18 +76,32 @@ struct AlertView: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack() {
+            createCrossButton()
             Text("Вы ввели очень большие показания приборов учета, все равно отправить?")
                 .bold()
                 .padding(.leading, 45)
                 .padding(.trailing, 45)
-                .padding(.top, 50)
                 .padding(.bottom, 20)
             createStackOfButtons()
                 .padding(.bottom, 30)
         }
         .background(Color.white)
         .border(Color.gray)
+    }
+
+    private func createCrossButton() -> some View {
+        HStack {
+            Spacer()
+            Button {
+                dismissAction()
+            } label: {
+                Image(systemName: "xmark")
+                    .foregroundColor(.black)
+                    .padding()
+                    .padding(.bottom, -10)
+            }
+        }
     }
 
     private func createStackOfButtons() -> some View {
