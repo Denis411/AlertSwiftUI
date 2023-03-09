@@ -8,15 +8,19 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var isAlertShown = false
+    @State private var isAlertShown = true
 
     var body: some View {
         VStack {
+            Text("Top")
+            Spacer()
             Button {
                 isAlertShown.toggle()
             } label: {
                 Text("Stow alert")
             }
+            Spacer()
+            Text("Bottom")
         }
         .modifier(AlertViewModifier(
             isAlertPresenter: $isAlertShown,
@@ -50,6 +54,7 @@ struct AlertViewModifier: ViewModifier {
             return AnyView(
             ZStack(alignment: .center) {
                 content
+                    .disabled(true)
                     .blur(radius: 0.5)
                 AlertView(
                     confirmAction: confirmAction(),
